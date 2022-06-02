@@ -5,16 +5,20 @@ export function getCentrosMedico(req, res, next) {
     .then((data) =>
       res
         .status(200)
-        .json({ title: "Retreived all centro medico", success: true, data })
+        .json({
+          title: "Recibir todos los centros medicos",
+          success: true,
+          data,
+        })
     )
     .catch((err) => res.status(400).json({ err }));
 }
 
 export function createCentroMedico(req, res, next) {
-  const { nombre, fk_medico, fk_parroquia, fk_tipo_centro_medico} = req.body;
+  const { nombre, fk_medico, fk_parroquia, fk_tipo_centro_medico } = req.body;
 
   CentroMedico.create(nombre, fk_medico, fk_parroquia, fk_tipo_centro_medico)
-    .then(res.status(201).json({ success: true, msg: "Centro Medico Created" }))
+    .then(res.status(201).json({ success: true, msg: "Centro Medico creado" }))
     .catch((err) => res.status(400).json({ err }));
 }
 
@@ -22,8 +26,16 @@ export function updateCentroMedico(req, res, next) {
   const { nombre, fk_medico, fk_parroquia, fk_tipo_centro_medico } = req.body;
   let id = req.params.id;
 
-  CentroMedico.update(nombre, fk_medico, fk_parroquia, fk_tipo_centro_medico, id)
-    .then(res.status(200).json({ success: true, msg: "Centro Medico Updated" }))
+  CentroMedico.update(
+    nombre,
+    fk_medico,
+    fk_parroquia,
+    fk_tipo_centro_medico,
+    id
+  )
+    .then(
+      res.status(200).json({ success: true, msg: "Centro Medico actualizado" })
+    )
     .catch((err) => res.status(400).json({ err }));
 }
 
@@ -31,6 +43,8 @@ export function deleteCentroMedico(req, res, next) {
   let id = req.params.id;
 
   CentroMedico.delete(id)
-    .then(res.status(200).json({ success: true, msg: "Centro Medico Deleted" }))
+    .then(
+      res.status(200).json({ success: true, msg: "Centro Medico eliminado" })
+    )
     .catch((err) => res.status(400).json({ err }));
 }
