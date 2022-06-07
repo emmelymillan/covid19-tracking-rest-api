@@ -1,4 +1,4 @@
-import Sintoma from "../models/sintoma.js";
+import Sintoma from "../models/sintoma.model.js";
 
 export function getSintomas(req, res, next) {
   Sintoma.get()

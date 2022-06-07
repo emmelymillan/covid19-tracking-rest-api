@@ -1,4 +1,4 @@
-import Caso from "../models/caso.js";
+import Caso from "../models/caso.model.js";
 
 export function getCasos(req, res, next) {
   Caso.get()

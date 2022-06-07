@@ -3,7 +3,7 @@ import {
   createCaso,
   updateCaso,
   deleteCaso,
-} from "../controllers/casoController.js";
+} from "../controllers/caso.controller.js";
 
 export default (app) => {
   app.get("/caso", getCasos);

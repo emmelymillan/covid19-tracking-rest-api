@@ -3,7 +3,7 @@ import db from "../config/config.js";
 const Usuario = {};
 
 Usuario.create = (
-  correo_electronico,
+  email,
   password,
   fecha_creacion,
   fecha_actualizacion,
@@ -11,10 +11,10 @@ Usuario.create = (
   fk_medico
 ) => {
   return db.none(
-    `INSERT into usuario(correo_electronico, password, fecha_creacion, fecha_actualizacion, activo, fk_medico)` +
+    `INSERT into usuario(email, password, fecha_creacion, fecha_actualizacion, activo, fk_medico)` +
       `VALUES($1, $2, $3, $4, $5, $6)`,
     [
-      correo_electronico,
+      email,
       password,
       fecha_creacion,
       fecha_actualizacion,
@@ -29,7 +29,7 @@ Usuario.get = () => {
 };
 
 Usuario.update = (
-  correo_electronico,
+  email,
   password,
   fecha_creacion,
   fecha_actualizacion,
@@ -38,9 +38,9 @@ Usuario.update = (
   usuarioId
 ) => {
   return db.none(
-    `UPDATE usuario SET correo_electronico = $1, password = $2, fecha_creacion = $3, fecha_actualizacion = $4, activo = $5, fk_medico $6 WHERE id = $7`,
+    `UPDATE usuario SET email = $1, password = $2, fecha_creacion = $3, fecha_actualizacion = $4, activo = $5, fk_medico $6 WHERE id = $7`,
     [
-      correo_electronico,
+      email,
       password,
       fecha_creacion,
       fecha_actualizacion,

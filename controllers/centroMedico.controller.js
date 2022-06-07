@@ -1,4 +1,4 @@
-import CentroMedico from "../models/centroMedico.js";
+import CentroMedico from "../models/centroMedico.model.js";
 
 export function getCentrosMedico(req, res, next) {
   CentroMedico.get()

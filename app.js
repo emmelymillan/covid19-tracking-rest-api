@@ -6,15 +6,15 @@ const app = express();
 import { join } from "path";
 import pkg from "body-parser";
 const { urlencoded, json } = pkg;
-import usuario from "./routes/usuarioRoutes.js";
-import roles from "./routes/roleRoutes.js";
-import tipoCentroMedico from "./routes/tipoCentroMedicoRoutes.js";
-import centroMedico from "./routes/centroMedicoRoutes.js";
-import medico from "./routes/medicoRoutes.js";
-import paciente from "./routes/pacienteRoutes.js";
-import sintoma from "./routes/sintomaRoutes.js";
-import caso from "./routes/casoRoutes.js";
-import permiso from "./routes/permisoRoutes.js";
+import usuario from "./routes/usuario.route.js";
+import roles from "./routes/role.route.js";
+import tipoCentroMedico from "./routes/tipoCentroMedico.route.js";
+import centroMedico from "./routes/centroMedico.route.js";
+import medico from "./routes/medico.route.js";
+import paciente from "./routes/paciente.route.js";
+import sintoma from "./routes/sintoma.route.js";
+import caso from "./routes/caso.route.js";
+import permiso from "./routes/permiso.route.js";
 
 import { createServer } from "http"; // CORE MODULE, USED TO CREATE THE HTTP SERVER
 const server = createServer(app); // CREATE HTTP SERVER USING APP

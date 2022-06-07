@@ -3,7 +3,7 @@ import {
   createUsuario,
   updateUsuario,
   deleteUsuario,
-} from "../controllers/usuarioController.js";
+} from "../controllers/usuario.controller.js";
 
 export default (app) => {
   app.get("/usuario", getUsuarios);

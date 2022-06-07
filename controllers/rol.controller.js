@@ -1,4 +1,4 @@
-import Rol from "../models/rol.js";
+import Rol from "../models/rol.model.js";
 
 export function getRoles(req, res, next) {
   Rol.get()

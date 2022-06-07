@@ -3,7 +3,7 @@ import {
   createSintoma,
   updateSintoma,
   deleteSintoma,
-} from "../controllers/sintomaController.js";
+} from "../controllers/sintoma.controller.js";
 
 export default (app) => {
   app.get("/sintomas", getSintomas);

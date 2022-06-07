@@ -1,4 +1,4 @@
-import Pacientes from "../models/paciente.js";
+import Pacientes from "../models/paciente.model.js";
 
 export function getPacientes(req, res, next) {
   Pacientes.get()

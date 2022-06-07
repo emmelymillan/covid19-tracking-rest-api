@@ -3,7 +3,7 @@ import {
   createPermiso,
   updatePermiso,
   deletePermiso,
-} from "../controllers/permisoController.js";
+} from "../controllers/permiso.controller.js";
 
 export default (app) => {
   app.get("/permisos", getPermisos);

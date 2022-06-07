@@ -1,10 +1,10 @@
-import TipoCentroMedico from "../models/tipoCentroMedico.js";
+import TipoCentroMedico from "../models/tipoCentroMedico.model.js";
 
 export function getTiposCentroMedico(req, res, next) {
   TipoCentroMedico.get()
     .then((data) =>
       res.status(200).json({
-        title: "Recibir todos los Tipo centro medico",
+        title: "Recibir todos los Tipos centro medico",
         success: true,
         data,
       })

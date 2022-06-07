@@ -3,7 +3,7 @@ import {
   createRole,
   updateRole,
   deleteRole,
-} from "../controllers/rolController.js";
+} from "../controllers/rol.controller.js";
 
 export default (app) => {
   app.get("/roles", getRoles);

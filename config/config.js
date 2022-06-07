@@ -1,4 +1,3 @@
-// PROMISE LIBRARY
 import promise from "bluebird";
 import pgPromise from "pg-promise";
 

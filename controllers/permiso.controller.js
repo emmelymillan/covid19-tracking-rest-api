@@ -1,4 +1,4 @@
-import Permiso from "../models/permiso.js";
+import Permiso from "../models/permiso.model.js";
 
 export function getPermisos(req, res, next) {
   Permiso.get()

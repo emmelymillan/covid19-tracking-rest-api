@@ -1,4 +1,4 @@
-import Medico from "../models/medico.js";
+import Medico from "../models/medico.model.js";
 
 export function getMedicos(req, res, next) {
   Medico.get()

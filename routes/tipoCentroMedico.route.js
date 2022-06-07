@@ -3,7 +3,7 @@ import {
   createTipoCentroMedico,
   updateTipoCentroMedico,
   deleteTipoCentroMedico,
-} from "../controllers/tipoCentroMedicoController.js";
+} from "../controllers/tipoCentroMedico.controller.js";
 
 export default (app) => {
   app.get("/tcm", getTiposCentroMedico);

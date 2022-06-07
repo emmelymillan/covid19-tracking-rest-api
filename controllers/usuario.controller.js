@@ -1,5 +1,5 @@
 // REQUIRE MODEL
-import Usuario from "../models/usuario.js";
+import Usuario from "../models/usuario.model.js";
 
 export function getUsuarios(req, res, next) {
   Usuario.get()
@@ -15,7 +15,7 @@ export function getUsuarios(req, res, next) {
 export function createUsuario(req, res, next) {
   // USE BODY PARSER TO EXTRACT DATA FROM CLIENT
   const {
-    correo_electronico,
+    email,
     password,
     fecha_creacion,
     fecha_actualizacion,
@@ -25,7 +25,7 @@ export function createUsuario(req, res, next) {
   } = req.body;
 
   Usuario.create(
-    correo_electronico,
+    email,
     password,
     fecha_creacion,
     fecha_actualizacion,
@@ -39,7 +39,7 @@ export function createUsuario(req, res, next) {
 export function updateUsuario(req, res, next) {
   // USE BODY PARSER TO EXTRACT DATA FROM CLIENT
   const {
-    correo_electronico,
+    email,
     password,
     fecha_creacion,
     fecha_actualizacion,
@@ -51,7 +51,7 @@ export function updateUsuario(req, res, next) {
   let id = req.params.id;
 
   Usuario.update(
-    correo_electronico,
+    email,
     password,
     fecha_creacion,
     fecha_actualizacion,
