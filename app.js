@@ -58,6 +58,33 @@ sintoma(app);
 caso(app);
 permiso(app);
 
+// Para la documentación del API
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Covid-19 Tracking REST API",
+      version: "0.1.0",
+      description: "REST API para mi tesis",
+      contact: {
+        name: "Emmely Millán",
+        // url: "https://logrocket.com",
+        email: "edmillan.16@est.ucab.edu.ve",
+      },
+    },
+  },
+  apis: ["./routes/*.js "],
+};
+
+
+const specs = swaggerJsdoc(options);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+// ************************************************** //
+
 app.set("port", port);
 server.listen(port);
 console.log("Server listening on port " + port);
