@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 const app = express();
-import { join } from "path";
+import cors from "cors";
 import pkg from "body-parser";
 const { urlencoded, json } = pkg;
 import usuario from "./routes/usuario.route.js";
@@ -15,6 +15,8 @@ import paciente from "./routes/paciente.route.js";
 import sintoma from "./routes/sintoma.route.js";
 import caso from "./routes/caso.route.js";
 import permiso from "./routes/permiso.route.js";
+import user from "./routes/user.routes.js";
+import auth from "./routes/auth.routes.js";
 
 import { createServer } from "http"; // CORE MODULE, USED TO CREATE THE HTTP SERVER
 const server = createServer(app); // CREATE HTTP SERVER USING APP
@@ -22,27 +24,15 @@ const port = process.env.PORT || "3000"; // INITIALIZE DEFAULT PORT OR PORT FROM
 
 import logger from "morgan"; // TERMINAL LOGGER: SHOWS THE ROUTE AND STATUS CODE FOR EVERY REQUEST
 
-// // VIEW ENGINE SETUP
-// app.set("views", join(__dirname, "views"));
-// app.set("view engine", "ejs");
-
-// USE STATIC FILES (CSS, JS, IMAGES)
-// app.use(static(join(__dirname, 'public')));
-
 app.use(logger("dev")); // USE MORGAN
-app.use(urlencoded({ extended: false })); // PARSE application/x-www-form-urlencoded
+app.use(urlencoded({ extended: true })); // PARSE application/x-www-form-urlencoded
 app.use(json()); // PARSE application/json
 
 // CORS
-app.all("/*", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+var corsOptions = {
+  origin: "http://localhost:3001",
+};
+app.use(cors(corsOptions));
 
 // SECURITY
 app.disable("x-powered-by");
@@ -58,6 +48,10 @@ sintoma(app);
 caso(app);
 permiso(app);
 
+// RUTAS DE LOGIN Y TEST
+auth(app);
+user(app);
+
 // Para la documentación del API
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
@@ -71,14 +65,12 @@ const options = {
       description: "REST API para mi tesis",
       contact: {
         name: "Emmely Millán",
-        // url: "https://logrocket.com",
         email: "edmillan.16@est.ucab.edu.ve",
       },
     },
   },
   apis: ["./routes/*.js "],
 };
-
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
@@ -94,5 +86,45 @@ app.use((err, req, res, next) => {
   console.log(err);
   res.status(err.status || 500).send(err.stack);
 });
+
+import DB from "./models/index.js";
+
+const Role = DB.role;
+
+/*
+  initial() function helps us to create 3 rows in database.
+  In development, you may need to drop existing tables and re-sync database. 
+  So you can use force: true as code above.
+
+  For production, just insert these rows manually and use sync() without parameters 
+  to avoid dropping data: 
+
+  DB.sequelize.sync();
+*/
+
+DB.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and Resync Db");
+  initial();
+});
+
+function initial() {
+  Role.create({
+    id: 1,
+    nombre: "user",
+    description: null,
+  });
+
+  Role.create({
+    id: 2,
+    nombre: "moderator",
+    descripcion: null,
+  });
+
+  Role.create({
+    id: 3,
+    nombre: "admin",
+    descripcion: null,
+  });
+}
 
 export default app;

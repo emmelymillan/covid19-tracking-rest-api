@@ -21,6 +21,7 @@ var cn = {
   database: "covid19_tracking_app",
   password: "12345",
   port: 5432,
+  dialect: "postgres",
 };
 const db = pgp(cn);
 
