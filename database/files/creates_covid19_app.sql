@@ -117,7 +117,9 @@ CREATE TABLE USUARIO (
     fecha_actualizacion TIMESTAMP,
     activo BOOLEAN DEFAULT true,
     fk_medico BIGINT NOT NULL,
+    fk_rol BIGINT NOT NULL,
     CONSTRAINT fk_medico_usuario FOREIGN KEY (fk_medico) REFERENCES USUARIO (id),
+    CONSTRAINT fk_rol_usuario FOREIGN KEY (fk_rol) REFERENCES ROL (id),
     CONSTRAINT pk_usuario PRIMARY KEY (id)
 );
 
