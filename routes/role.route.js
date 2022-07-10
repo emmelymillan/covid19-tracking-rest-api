@@ -1,11 +1,21 @@
 import {
-  getRoles,
-  createRole,
-  updateRole,
-  deleteRole,
+  create,
+  findOne,
+  update,
+  destroy,
+  list,
 } from "../controllers/rol.controller.js";
 
 export default (app) => {
+  app.use((req, res, next) => {
+    res.append("Access-Control-Allow-Origin", ["*"]);
+    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.append("Access-Control-Allow-Headers", "Content-Type");
+    res.append("Access-Control-Expose-Headers", "Content-Range");
+    res.append("Content-Range", 5);
+    next();
+  });
+
   /**
    * @swagger
    * /roles:
@@ -19,11 +29,26 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/roles", getRoles);
+  app.get("/roles", list);
 
   /**
    * @swagger
-   * /role/new:
+   * /roles/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo rol.
+   *      tags: [Roles]
+   *      security:
+   *          - ApiKeyAuth: []
+   *      responses:
+   *          '200':
+   *              description: ok
+   *
+   */
+  app.get("/roles/:id", findOne);
+
+  /**
+   * @swagger
+   * /roles:
    *  post:
    *      summary: Webservice para crear rol.
    *      tags: [Roles]
@@ -43,11 +68,11 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Rol'
    */
-  app.post("/role/new", createRole);
+  app.post("/roles", create);
 
   /**
    * @swagger
-   * /role/update/{id}:
+   * /roles/{id}:
    *   put:
    *      summary: Webservice para editar/actualizar rol.
    *      tags: [Roles]
@@ -70,11 +95,11 @@ export default (app) => {
    *          "200":
    *            description: Rol editado exitosamente.
    */
-  app.put("/role/update/:id", updateRole);
+  app.put("/roles/:id", update);
 
   /**
    * @swagger
-   * /role/delete/{id}:
+   * /roles/{id}:
    *   delete:
    *      summary: Webservice para eliminar rol.
    *      tags: [Roles]
@@ -91,5 +116,5 @@ export default (app) => {
    *          "200":
    *            description: Rol eliminado exitosamente.
    */
-  app.delete("/role/delete/:id", deleteRole);
+  app.delete("/roles/:id", destroy);
 };

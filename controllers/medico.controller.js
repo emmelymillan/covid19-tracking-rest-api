@@ -1,16 +1,25 @@
-import Medico from "../models/medico.model.js";
+import DB from "../models/index.js";
+import sequelize from "sequelize";
 
-export function getMedicos(req, res, next) {
-  Medico.get()
-    .then((data) =>
-      res
-        .status(200)
-        .json({ title: "Recibir todos los medico", success: true, data })
-    )
-    .catch((err) => res.status(400).json({ err }));
+const Medico = DB.medico;
+
+// Listar medicos
+export function list(req, res) {
+  const sort = JSON.parse(req.query.sort);
+  Medico.findAll({
+    order: [[sequelize.col(sort[0]), sort[1]]],
+  })
+    .then((medicos) => {
+      res.setHeader("Content-Range", medicos.length);
+      res.status(200).send(medicos);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function createMedico(req, res, next) {
+// Guardar medico
+export function create(req, res) {
   const {
     nombres,
     apellidos,
@@ -21,20 +30,40 @@ export function createMedico(req, res, next) {
     codigo_medico,
   } = req.body;
 
-  Medico.create(
+  Medico.create({
     nombres,
     apellidos,
     tipo_documento,
     nro_documento,
     es_coordinador,
     especialidad,
-    codigo_medico
-  )
-    .then(res.status(201).json({ success: true, msg: "Medico creado" }))
-    .catch((err) => res.status(400).json({ err }));
+    codigo_medico,
+  })
+    .then((medico) => {
+      res.status(200).json({ id: medico.id });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function updateMedico(req, res, next) {
+// Obtener medico
+export function findOne(req, res) {
+  Medico.findOne({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((medico) => {
+      res.status(200).json(medico);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+}
+
+// Actualizar medico
+export function update(req, res) {
   const {
     nombres,
     apellidos,
@@ -44,26 +73,42 @@ export function updateMedico(req, res, next) {
     especialidad,
     codigo_medico,
   } = req.body;
-  let id = req.params.id;
 
   Medico.update(
-    nombres,
-    apellidos,
-    tipo_documento,
-    nro_documento,
-    es_coordinador,
-    especialidad,
-    codigo_medico,
-    id
+    {
+      nombres,
+      apellidos,
+      tipo_documento,
+      nro_documento,
+      es_coordinador,
+      especialidad,
+      codigo_medico,
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
   )
-    .then(res.status(200).json({ success: true, msg: "Medico actualizado" }))
-    .catch((err) => res.status(400).json({ err }));
+    .then((medico) => {
+      res.status(200).json({ id: medico });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function deleteMedico(req, res, next) {
-  let id = req.params.id;
-
-  Medico.delete(id)
-    .then(res.status(200).json({ success: true, msg: "Medico eliminado" }))
-    .catch((err) => res.status(400).json({ err }));
+// Borrar medico
+export function destroy(req, res) {
+  Medico.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((medico) => {
+      res.status(200).json(medico);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
