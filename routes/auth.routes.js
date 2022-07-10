@@ -60,10 +60,7 @@ export default function (app) {
    */
   app.post(
     "/auth/signup",
-    [
-      verifySignUp.checkDuplicateUsernameOrEmail,
-      verifySignUp.checkRolesExisted,
-    ],
+    [verifySignUp.checkDuplicateUsernameOrEmail],
     signup
   );
 

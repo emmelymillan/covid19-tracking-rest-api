@@ -6,7 +6,6 @@ const app = express();
 import cors from "cors";
 import pkg from "body-parser";
 const { urlencoded, json } = pkg;
-import usuario from "./routes/usuario.route.js";
 import roles from "./routes/role.route.js";
 import tipoCentroMedico from "./routes/tipoCentroMedico.route.js";
 import centroMedico from "./routes/centroMedico.route.js";
@@ -15,7 +14,7 @@ import paciente from "./routes/paciente.route.js";
 import sintoma from "./routes/sintoma.route.js";
 import caso from "./routes/caso.route.js";
 import permiso from "./routes/permiso.route.js";
-import user from "./routes/user.routes.js";
+import user from "./routes/usuario.routes.js";
 import auth from "./routes/auth.routes.js";
 
 import { createServer } from "http"; // CORE MODULE, USED TO CREATE THE HTTP SERVER
@@ -29,16 +28,17 @@ app.use(urlencoded({ extended: true })); // PARSE application/x-www-form-urlenco
 app.use(json()); // PARSE application/json
 
 // CORS
-var corsOptions = {
+const corsOptions = {
   origin: "http://localhost:3001",
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
 // SECURITY
 app.disable("x-powered-by");
+app.set("Access-Control-Expose-Headers", "Content-Range");
 
 // RUTAS
-usuario(app);
 roles(app);
 tipoCentroMedico(app);
 centroMedico(app);
@@ -87,10 +87,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.stack);
 });
 
-import DB from "./models/index.js";
-
-const Role = DB.role;
-
 /*
   initial() function helps us to create 3 rows in database.
   In development, you may need to drop existing tables and re-sync database. 
@@ -107,23 +103,32 @@ DB.sequelize.sync({ force: true }).then(() => {
   initial();
 });
 
+import DB from "./models/index.js";
+
+const Role = DB.role;
+const TipoCentroMedico = DB.tipoCentroMedico;
+
 function initial() {
   Role.create({
-    id: 1,
-    nombre: "user",
+    nombre: "USER",
     description: null,
   });
 
   Role.create({
-    id: 2,
-    nombre: "moderator",
+    nombre: "MODERATOR",
     descripcion: null,
   });
 
   Role.create({
-    id: 3,
-    nombre: "admin",
+    nombre: "ADMIN",
     descripcion: null,
+  });
+
+  TipoCentroMedico.create({
+    nombre: "Clínica",
+  });
+  TipoCentroMedico.create({
+    nombre: "Hospital",
   });
 }
 

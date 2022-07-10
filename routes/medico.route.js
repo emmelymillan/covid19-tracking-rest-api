@@ -1,16 +1,25 @@
 import {
-  getMedicos,
-  createMedico,
-  updateMedico,
-  deleteMedico,
+  list,
+  create,
+  update,
+  destroy,
+  findOne,
 } from "../controllers/medico.controller.js";
 
 export default (app) => {
-    /**
+  app.use(function (req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
+
+  /**
    * @swagger
-   * /medico:
+   * /medicos:
    *  get:
-   *      summary: Webservice para obtener la lista de casos.
+   *      summary: Webservice para obtener la lista de medicos.
    *      tags: [Medicos]
    *      security:
    *          - ApiKeyAuth: []
@@ -19,11 +28,11 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/medico", getMedicos);
-  
+  app.get("/medicos", list);
+
   /**
    * @swagger
-   * /medico/new:
+   * /medicos:
    *  post:
    *      summary: Webservice para crear medico.
    *      tags: [Medicos]
@@ -43,11 +52,26 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Medico'
    */
-  app.post("/medico/new", createMedico);
+  app.post("/medicos", create);
 
-    /**
+  /**
    * @swagger
-   * /medico/update/{id}:
+   * /medicos/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo medico.
+   *      tags: [Medicos]
+   *      security:
+   *          - ApiKeyAuth: []
+   *      responses:
+   *          '200':
+   *              description: ok
+   *
+   */
+  app.get("/medicos/:id", findOne);
+
+  /**
+   * @swagger
+   * /medicos/{id}:
    *   put:
    *      summary: Webservice para editar/actualizar medico.
    *      tags: [Medicos]
@@ -70,11 +94,11 @@ export default (app) => {
    *          "200":
    *            description: Medico editado exitosamente.
    */
-  app.put("/medico/update/:id", updateMedico);
-  
+  app.put("/medicos/:id", update);
+
   /**
    * @swagger
-   * /medico/delete/{id}:
+   * /medicos/{id}:
    *   delete:
    *      summary: Webservice para eliminar medico.
    *      tags: [Medicos]
@@ -91,5 +115,5 @@ export default (app) => {
    *          "200":
    *            description: Medico eliminado exitosamente.
    */
-  app.delete("/medico/delete/:id", deleteMedico);
+  app.delete("/medicos/:id", destroy);
 };
