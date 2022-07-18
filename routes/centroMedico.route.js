@@ -1,14 +1,15 @@
 import {
-  getCentrosMedico,
-  createCentroMedico,
-  updateCentroMedico,
-  deleteCentroMedico,
+  list,
+  create,
+  findOne,
+  update,
+  destroy,
 } from "../controllers/centroMedico.controller.js";
 
 export default (app) => {
-    /**
+  /**
    * @swagger
-   * /cm:
+   * /centros-medicos:
    *  get:
    *      summary: Webservice para obtener la lista de centros medicos.
    *      tags: [Centros Medicos]
@@ -19,11 +20,11 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/cm", getCentrosMedico);
+  app.get("/centros-medicos", list);
 
-    /**
+  /**
    * @swagger
-   * /cm/new:
+   * /centros-medicos:
    *  post:
    *      summary: Webservice para crear centro medico.
    *      tags: [Centros Medicos]
@@ -43,11 +44,26 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/CentroMedico'
    */
-  app.post("/cm/new", createCentroMedico);
-  
+  app.post("/centros-medicos", create);
+
   /**
    * @swagger
-   * /cm/update/{id}:
+   * /centros-medicos/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo centro médico.
+   *      tags: [Centros Medicos]
+   *      security:
+   *          - ApiKeyAuth: []
+   *      responses:
+   *          '200':
+   *              description: ok
+   *
+   */
+  app.get("/centros-medicos/:id", findOne);
+
+  /**
+   * @swagger
+   * /centros-medicos/{id}:
    *   put:
    *      summary: Webservice para editar/actualizar centro medico.
    *      tags: [Centros Medicos]
@@ -70,11 +86,11 @@ export default (app) => {
    *          "200":
    *            description: Centro medico editado exitosamente.
    */
-  app.put("/cm/update/:id", updateCentroMedico);
+  app.put("/centros-medicos/:id", update);
 
   /**
    * @swagger
-   * /cm/delete/{id}:
+   * /centros-medicos/{id}:
    *   delete:
    *      summary: Webservice para eliminar caso.
    *      tags: [Centros Medicos]
@@ -91,5 +107,5 @@ export default (app) => {
    *          "200":
    *            description: Centro medico eliminado exitosamente.
    */
-  app.delete("/cm/delete/:id", deleteCentroMedico);
+  app.delete("/centros-medicos/:id", destroy);
 };
