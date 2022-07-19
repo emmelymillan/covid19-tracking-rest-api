@@ -1,35 +1,21 @@
 import DB from "../models/index.js";
 
-const User = DB.user;
+const Medico = DB.medico;
 
 const checkDuplicateUsernameOrEmail = (req, res, next) => {
-  // Username
-  User.findOne({
+  // Email
+  Medico.findOne({
     where: {
-      username: req.body.username,
+      correo: req.body.correo,
     },
-  }).then((user) => {
-    if (user) {
+  }).then((medico) => {
+    if (medico) {
       res.status(400).send({
-        message: "Failed! Username is already in use!",
+        message: "Error! el correo electrónico ya existe.",
       });
       return;
     }
-
-    // Email
-    User.findOne({
-      where: {
-        email: req.body.email,
-      },
-    }).then((user) => {
-      if (user) {
-        res.status(400).send({
-          message: "Failed! Email is already in use!",
-        });
-        return;
-      }
-      next();
-    });
+    next();
   });
 };
 

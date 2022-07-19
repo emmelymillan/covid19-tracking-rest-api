@@ -27,8 +27,32 @@ const Medico = (sequelize, Sequelize) => {
       codigo_medico: {
         type: Sequelize.STRING,
       },
+      correo: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      clave: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      fecha_creacion: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      fecha_actualizacion: {
+        type: Sequelize.DATE,
+      },
+      activo: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
     },
-    { timestamps: false, freezeTableName: true }
+    {
+      timestamps: true,
+      createdAt: "fecha_creacion",
+      updatedAt: "fecha_actualizacion",
+      freezeTableName: true,
+    }
   );
   return Medico;
 };

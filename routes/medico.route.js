@@ -5,6 +5,7 @@ import {
   destroy,
   findOne,
 } from "../controllers/medico.controller.js";
+import verifySignUp from "../middleware/verifySignUp.js";
 
 export default (app) => {
   app.use(function (req, res, next) {
@@ -52,7 +53,7 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Medico'
    */
-  app.post("/medicos", create);
+  app.post("/medicos", [verifySignUp.checkDuplicateUsernameOrEmail], create);
 
   /**
    * @swagger

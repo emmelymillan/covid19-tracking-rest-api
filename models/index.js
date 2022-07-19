@@ -1,7 +1,6 @@
 import * as db from "../config/database.config.js";
 
 import Sequelize from "sequelize";
-import User from "./usuario.model.js";
 import Role from "./role.model.js";
 import CentroMedico from "./centroMedico.model.js";
 import Medico from "./medico.model.js";
@@ -18,24 +17,19 @@ const DB = {};
 DB.Sequelize = Sequelize;
 DB.sequelize = sequelize;
 
-DB.user = User(sequelize, Sequelize);
 DB.role = Role(sequelize, Sequelize);
 DB.medico = Medico(sequelize, Sequelize);
 DB.tipoCentroMedico = TipoCentroMedico(sequelize, Sequelize);
 DB.centroMedico = CentroMedico(sequelize, Sequelize);
 
-DB.role.hasMany(DB.user, {
+DB.role.hasMany(DB.medico, {
   foreignKey: "fk_rol",
 });
-DB.user.belongsTo(DB.role, {
+DB.medico.belongsTo(DB.role, {
   foreignKey: "fk_rol",
 });
 
 DB.medico.hasOne(DB.centroMedico, {
-  foreignKey: "fk_medico",
-});
-
-DB.medico.hasOne(DB.user, {
   foreignKey: "fk_medico",
 });
 

@@ -1,83 +1,44 @@
 import DB from "../models/index.js";
-import Sequelize from "sequelize";
 import { secret } from "../config/auth.config.js";
 import pkgJwt from "jsonwebtoken";
 import pkg from "bcryptjs";
 
 const { sign } = pkgJwt;
-const { hashSync, compareSync } = pkg;
-const Op = Sequelize.Op;
-const User = DB.user;
-const Role = DB.role;
-
-export function signup(req, res) {
-  // Save User to Database
-  User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: hashSync(req.body.password, 8),
-  })
-    .then((user) => {
-      if (req.body.roles) {
-        Role.findOne({
-          where: {
-            nombre: {
-              [Op.or]: req.body.roles,
-            },
-          },
-        }).then((roles) => {
-          user.setRol(roles).then(() => {
-            res.send({ message: "User was registered successfully!" });
-          });
-        });
-      } else {
-        // user role = 1
-        user.setRol([1]).then(() => {
-          res.send({ message: "User was registered successfully!" });
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
-}
+const { compareSync } = pkg;
+const Medico = DB.medico;
 
 export function signin(req, res) {
-  User.findOne({
+  Medico.findOne({
     where: {
-      username: req.body.username,
+      correo: req.body.correo,
     },
   })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+    .then((medico) => {
+      if (!medico) {
+        return res.status(404).send({ message: "Medico no encontrado." });
       }
 
-      var passwordIsValid = compareSync(req.body.password, user.password);
+      var passwordIsValid = compareSync(req.body.clave, medico.clave);
 
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!",
+          message: "Datos incorrectos.",
         });
       }
 
-      var token = sign({ id: user.id }, secret, {
+      var token = sign({ id: medico.id }, secret, {
         expiresIn: 86400, // 24 hours
       });
 
-      var authorities = [];
-
-      user.getRol().then((rol) => {
-        console.log("Im here", rol.nombre);
-
-        authorities.push("ROLE_" + rol.nombre.toUpperCase());
-
+      medico.getRol().then((rol) => {
         res.status(200).send({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: authorities,
+          id: medico.id,
+          correo: medico.correo,
+          nombre: medico.nombres + " " + medico.apellidos,
+          coordinador: medico.es_coordinador,
+          activo: medico.activo,
+          rol: "ROLE_" + rol.nombre.toUpperCase(),
           accessToken: token,
         });
       });

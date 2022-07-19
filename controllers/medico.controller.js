@@ -1,7 +1,12 @@
 import DB from "../models/index.js";
+import Sequelize from "sequelize";
 import sequelize from "sequelize";
+import pkg from "bcryptjs";
 
+const { hashSync } = pkg;
+const Op = Sequelize.Op;
 const Medico = DB.medico;
+const Role = DB.role;
 
 // Listar medicos
 export function list(req, res) {
@@ -28,6 +33,9 @@ export function create(req, res) {
     es_coordinador,
     especialidad,
     codigo_medico,
+    correo,
+    clave,
+    rol,
   } = req.body;
 
   Medico.create({
@@ -38,9 +46,27 @@ export function create(req, res) {
     es_coordinador,
     especialidad,
     codigo_medico,
+    correo,
+    clave: hashSync(clave, 8),
+    rol,
   })
     .then((medico) => {
-      res.status(200).json({ id: medico.id });
+      if (rol) {
+        Role.findOne({
+          where: {
+            nombre: rol,
+          },
+        }).then((roles) => {
+          medico.setRol(roles).then(() => {
+            res.status(200).json({ id: medico.id });
+          });
+        });
+      } else {
+        // medico con rol 1
+        medico.setRol(1).then(() => {
+          res.send({ message: "Médico registrado exitosamente!" });
+        });
+      }
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
@@ -72,6 +98,7 @@ export function update(req, res) {
     es_coordinador,
     especialidad,
     codigo_medico,
+    activo,
   } = req.body;
 
   Medico.update(
@@ -83,6 +110,7 @@ export function update(req, res) {
       es_coordinador,
       especialidad,
       codigo_medico,
+      activo,
     },
     {
       where: {
