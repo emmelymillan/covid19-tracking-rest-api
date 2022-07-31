@@ -60,9 +60,12 @@ DB.caso.belongsTo(DB.centroMedico, {
   foreignKey: "fk_centro_medico",
 });
 
-// Relación de medico y centros medicos (cambiar)
-DB.medico.hasOne(DB.centroMedico, {
-  foreignKey: "fk_medico",
+// Relación de centros medicos y medicos
+DB.centroMedico.hasMany(DB.medico, {
+  foreignKey: "fk_centro_medico",
+});
+DB.medico.belongsTo(DB.centroMedico, {
+  foreignKey: "fk_centro_medico",
 });
 
 // Relación de tipos de centros medicos y centros medicos
