@@ -1,12 +1,13 @@
 import {
-  getSintomas,
-  createSintoma,
-  updateSintoma,
-  deleteSintoma,
+  list,
+  findOne,
+  create,
+  update,
+  destroy,
 } from "../controllers/sintoma.controller.js";
 
 export default (app) => {
-    /**
+  /**
    * @swagger
    * /sintomas:
    *  get:
@@ -19,13 +20,35 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/sintomas", getSintomas);
+  app.get("/sintomas", list);
 
-    /**
+  /**
    * @swagger
-   * /sintoma/new:
+   * /sintomas/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo sintoma.
+   *      tags: [Sintomas]
+   *      security:
+   *          - ApiKeyAuth: []
+   *      parameters:
+   *          - in: path
+   *            name: id
+   *            schema:
+   *              type: integer
+   *              required: true
+   *              description: El ID del Sintoma a buscar
+   *      responses:
+   *          '200':
+   *              description: ok
+   *
+   */
+  app.get("/sintomas/:id", findOne);
+
+  /**
+   * @swagger
+   * /sintomas:
    *  post:
-   *      summary: Webservice para crear sintoma.
+   *      summary: Webservice para crear un síntoma.
    *      tags: [Sintomas]
    *      security:
    *          - ApiKeyAuth: []
@@ -43,11 +66,11 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Sintoma'
    */
-  app.post("/sintoma/new", createSintoma);
+  app.post("/sintomas", create);
 
-    /**
+  /**
    * @swagger
-   * /sintoma/update/{id}:
+   * /sintomas/{id}:
    *   put:
    *      summary: Webservice para editar/actualizar sintoma.
    *      tags: [Sintomas]
@@ -70,13 +93,13 @@ export default (app) => {
    *          "200":
    *            description: Sintoma editado exitosamente.
    */
-  app.put("/sintoma/update/:id", updateSintoma);
+  app.put("/sintomas/:id", update);
 
-    /**
+  /**
    * @swagger
-   * /sintoma/delete/{id}:
+   * /simtomas/{id}:
    *   delete:
-   *      summary: Webservice para eliminar sintoma.
+   *      summary: Webservice para eliminar un síntoma.
    *      tags: [Sintomas]
    *      security:
    *          - ApiKeyAuth: []
@@ -86,10 +109,10 @@ export default (app) => {
    *            schema:
    *              type: integer
    *              required: true
-   *              description: El ID del sintoma a eliminar
+   *              description: El ID del síntoma a eliminar
    *      responses:
    *          "200":
-   *            description: Sintoma eliminado exitosamente.
+   *            description: Síntoma eliminado exitosamente.
    */
-  app.delete("/sintoma/delete/:id", deleteSintoma);
+  app.delete("/sintomas/:id", destroy);
 };

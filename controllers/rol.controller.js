@@ -5,7 +5,7 @@ const Role = DB.role;
 
 export function list(req, res) {
   const sort = JSON.parse(req.query.sort);
-  // console.log(req.query.range);
+
   Role.findAll({
     order: [[sequelize.col(sort[0]), sort[1]]],
   })
@@ -33,7 +33,6 @@ export function create(req, res) {
 }
 
 export function findOne(req, res) {
-  //  Guardar rol
   Role.findOne({
     where: {
       id: req.params.id,
@@ -60,7 +59,6 @@ export function update(req, res) {
     }
   )
     .then((rol) => {
-      console.log("holaaa", rol);
       res.status(200).json({ id: rol });
     })
     .catch((err) => {
@@ -69,7 +67,6 @@ export function update(req, res) {
 }
 
 export function destroy(req, res) {
-  //  Guardar rol
   Role.destroy({
     where: {
       id: req.params.id,

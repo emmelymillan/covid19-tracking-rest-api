@@ -1,36 +1,76 @@
-import Sintoma from "../models/sintoma.model.js";
+import DB from "../models/index.js";
+import sequelize from "sequelize";
 
-export function getSintomas(req, res, next) {
-  Sintoma.get()
-    .then((data) =>
-      res
-        .status(200)
-        .json({ title: "Recibir todos los sintomas", success: true, data })
-    )
-    .catch((err) => res.status(400).json({ err }));
+const Sintoma = DB.sintoma;
+
+export function list(req, res, next) {
+  // const sort = JSON.parse(req.query.sort);
+
+  Sintoma.findAll()
+    .then((sintomas) => {
+      res.setHeader("Content-Range", sintomas.length);
+      res.status(200).send(sintomas);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function createSintoma(req, res, next) {
-  const { nombre } = req.body;
-
-  Sintoma.create(nombre)
-    .then(res.status(201).json({ success: true, msg: "Sintoma creado" }))
-    .catch((err) => res.status(400).json({ err }));
+export function create(req, res) {
+  Sintoma.create({
+    nombre: req.body.nombre,
+  })
+    .then((sintoma) => {
+      res.status(200).json({ id: sintoma.id });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function updateSintoma(req, res, next) {
-  const { nombre } = req.body;
-  let id = req.params.id;
-
-  Sintoma.update(nombre, id)
-    .then(res.status(200).json({ success: true, msg: "Sintoma actualizado" }))
-    .catch((err) => res.status(400).json({ err }));
+export function findOne(req, res) {
+  Sintoma.findOne({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((sintoma) => {
+      res.status(200).json(sintoma);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function deleteSintoma(req, res, next) {
-  let id = req.params.id;
+export function update(req, res) {
+  Sintoma.update(
+    {
+      nombre: req.body.nombre,
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  )
+    .then((sintoma) => {
+      res.status(200).json({ id: sintoma });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+}
 
-  Sintoma.delete(id)
-    .then(res.status(200).json({ success: true, msg: "Sintoma eliminado" }))
-    .catch((err) => res.status(400).json({ err }));
+export function destroy(req, res) {
+  Sintoma.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((sintoma) => {
+      res.status(200).json(sintoma);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
