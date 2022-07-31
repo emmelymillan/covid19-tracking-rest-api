@@ -13,7 +13,6 @@ import medico from "./routes/medico.route.js";
 import paciente from "./routes/paciente.route.js";
 import sintoma from "./routes/sintoma.route.js";
 import caso from "./routes/caso.route.js";
-import permiso from "./routes/permiso.route.js";
 import user from "./routes/usuario.routes.js";
 import auth from "./routes/auth.routes.js";
 
@@ -46,7 +45,6 @@ medico(app);
 paciente(app);
 sintoma(app);
 caso(app);
-permiso(app);
 
 // RUTAS DE LOGIN Y TEST
 auth(app);
@@ -107,6 +105,7 @@ import DB from "./models/index.js";
 
 const Role = DB.role;
 const TipoCentroMedico = DB.tipoCentroMedico;
+const Sintoma = DB.sintoma;
 
 function initial() {
   Role.create({
@@ -130,6 +129,28 @@ function initial() {
   TipoCentroMedico.create({
     nombre: "Hospital",
   });
+
+  Sintoma.create({ nombre: "Fiebre" });
+  Sintoma.create({ nombre: "Tos" });
+  Sintoma.create({ nombre: "Cansancio" });
+  Sintoma.create({ nombre: "Pérdida del gusto o el olfato" });
+  Sintoma.create({ nombre: "Congestión nasal" });
+  Sintoma.create({ nombre: "Dolor de garganta" });
+  Sintoma.create({ nombre: "Dolor de cabeza" });
+  Sintoma.create({ nombre: "Dolores musculares o articulares" });
+  Sintoma.create({ nombre: "Nauseas o vómitos" });
+  Sintoma.create({ nombre: "Diarrea" });
+  Sintoma.create({ nombre: "Escalofríos" });
+  Sintoma.create({ nombre: "Vértigo" });
+  Sintoma.create({
+    nombre:
+      "Erupción en la piel o decoloración de los dedos de las manos o pies",
+  });
+  Sintoma.create({ nombre: "Ojos rojos o irritados" });
+  Sintoma.create({ nombre: "Dificultad para respirar o falta de aire" });
+  Sintoma.create({ nombre: "Pérdida del habla o la movilidad, o confusión" });
+  Sintoma.create({ nombre: "Temperatura alta (por encima de los 38°C)" });
+  Sintoma.create({ nombre: "Dolor en el pecho" });
 }
 
 export default app;
