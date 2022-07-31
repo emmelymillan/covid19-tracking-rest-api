@@ -178,16 +178,16 @@
  *            format: date-time
  *            description: Fecha de nacimiento del paciente.
  *          genero:
- *            type: integer
+ *            type: string
  *            description: Genero del paciente.
  *          nro_telefono:
- *            type: integer
+ *            type: string
  *            description: Numero de telefono del paciente.
  *          direccion_latitud:
- *            type: integer
+ *            type: string
  *            description: Latitud de la direccion del paciente.
  *          direccion_longitud:
- *            type: integer
+ *            type: string
  *            description: Longitud de la direccion del paciente.
  *          antecedentes_medicos:
  *            type: integer

@@ -39,6 +39,13 @@ export default (app) => {
    *      tags: [Roles]
    *      security:
    *          - ApiKeyAuth: []
+   *      parameters:
+   *          - in: path
+   *            name: id
+   *            schema:
+   *              type: integer
+   *              required: true
+   *              description: El ID del rol a editar
    *      responses:
    *          '200':
    *              description: ok

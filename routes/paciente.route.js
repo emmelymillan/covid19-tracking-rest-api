@@ -1,14 +1,17 @@
-import {
-  getPacientes,
-  createPaciente,
-  updatePaciente,
-  deletePaciente,
-} from "../controllers/paciente.controller.js";
+import { list, findOne, create } from "../controllers/paciente.controller.js";
 
 export default (app) => {
+  app.use((req, res, next) => {
+    res.append("Access-Control-Allow-Origin", ["*"]);
+    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.append("Access-Control-Allow-Headers", "Content-Type");
+    res.append("Access-Control-Expose-Headers", "Content-Range");
+    res.append("Content-Range", 5);
+    next();
+  });
   /**
    * @swagger
-   * /paciente:
+   * /pacientes:
    *  get:
    *      summary: Webservice para obtener la lista de paciente.
    *      tags: [Pacientes]
@@ -19,13 +22,13 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/paciente", getPacientes);
+  app.get("/pacientes", list);
 
   /**
    * @swagger
-   * /paciente/new:
+   * /pacientes:
    *  post:
-   *      summary: Webservice para crear paciente.
+   *      summary: Webservice para crear pacientes.
    *      tags: [Pacientes]
    *      security:
    *          - ApiKeyAuth: []
@@ -43,22 +46,16 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Paciente'
    */
-  app.post("/paciente/new", createPaciente);
+  app.post("/pacientes", create);
 
   /**
    * @swagger
-   * /paciente/update/{id}:
-   *   put:
-   *      summary: Webservice para editar/actualizar paciente.
+   * /pacientes/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo paciente.
    *      tags: [Pacientes]
    *      security:
    *          - ApiKeyAuth: []
-   *      requestBody:
-   *          required: true
-   *          content:
-   *            application/json:
-   *              schema:
-   *                $ref: '#/components/schemas/Paciente'
    *      parameters:
    *          - in: path
    *            name: id
@@ -67,29 +64,9 @@ export default (app) => {
    *              required: true
    *              description: El ID del paciente a editar
    *      responses:
-   *          "200":
-   *            description: Paciente editado exitosamente.
+   *          '200':
+   *              description: ok
+   *
    */
-  app.put("/paciente/update/:id", updatePaciente);
-
-  /**
-   * @swagger
-   * /paciente/delete/{id}:
-   *   delete:
-   *      summary: Webservice para eliminar paciente.
-   *      tags: [Pacientes]
-   *      security:
-   *          - ApiKeyAuth: []
-   *      parameters:
-   *          - in: path
-   *            name: id
-   *            schema:
-   *              type: integer
-   *              required: true
-   *              description: El ID del paciente a eliminar
-   *      responses:
-   *          "200":
-   *            description: Paciente eliminado exitosamente.
-   */
-  app.delete("/paciente/delete/:id", deletePaciente);
+  app.get("/pacientes/:id", findOne);
 };

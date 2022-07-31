@@ -1,16 +1,38 @@
-import Pacientes from "../models/paciente.model.js";
+import DB from "../models/index.js";
+import sequelize from "sequelize";
 
-export function getPacientes(req, res, next) {
-  Pacientes.get()
-    .then((data) =>
-      res
-        .status(200)
-        .json({ title: "Recibir todos los paciente", success: true, data })
-    )
-    .catch((err) => res.status(400).json({ err }));
+const Paciente = DB.paciente;
+
+export function list(req, res) {
+  // const sort = JSON.parse(req.query.sort);
+
+  Paciente.findAll({
+    // order: [[sequelize.col(sort[0]), sort[1]]],
+  })
+    .then((pacientes) => {
+      res.setHeader("Content-Range", pacientes.length);
+      res.status(200).send(pacientes);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
-export function createPaciente(req, res, next) {
+export function findOne(req, res) {
+  Paciente.findOne({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((paciente) => {
+      res.status(200).json(paciente);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+}
+
+export function create(req, res) {
   const {
     nombres,
     apellidos,
@@ -21,10 +43,10 @@ export function createPaciente(req, res, next) {
     nro_telefono,
     direccion_latitud,
     direccion_longitud,
-    antecedentes_medicos,
+    // antecedentes_medicos,
   } = req.body;
 
-  Pacientes.create(
+  Paciente.create({
     nombres,
     apellidos,
     tipo_documento,
@@ -34,10 +56,14 @@ export function createPaciente(req, res, next) {
     nro_telefono,
     direccion_latitud,
     direccion_longitud,
-    antecedentes_medicos
-  )
-    .then(res.status(201).json({ success: true, msg: "paciente creado" }))
-    .catch((err) => res.status(400).json({ err }));
+    // antecedentes_medicos
+  })
+    .then((paciente) => {
+      res.status(200).json({ id: paciente.id });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 }
 
 export function updatePaciente(req, res, next) {
