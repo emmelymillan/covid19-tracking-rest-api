@@ -13,6 +13,7 @@ export function list(req, res) {
   const sort = JSON.parse(req.query.sort);
   Medico.findAll({
     order: [[sequelize.col(sort[0]), sort[1]]],
+    include: Role,
   })
     .then((medicos) => {
       res.setHeader("Content-Range", medicos.length);

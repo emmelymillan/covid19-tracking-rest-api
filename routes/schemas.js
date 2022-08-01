@@ -16,7 +16,7 @@
  *            description: El id auto-generado de caso.
  *            readOnly: true
  *          estado:
- *            type: string
+ *            type: boolean
  *            description: Estado actual del caso.
  *          fecha_ingreso:
  *            type: string
@@ -33,12 +33,50 @@
  *          fk_medico:
  *            type: integer
  *            description: ID del médico que crea el caso.
- *          fk_paciente:
- *            type: integer
- *            description: ID del paciente al que se le crea el caso.
  *          fk_centro_medico:
  *            type: integer
- *            description: ID del centro médico en donde se creó el caso.
+ *            description: ID del centro médico que pertenece el caso.
+ *          paciente:
+ *            type: object
+ *            properties:
+ *                  id:
+ *                    type: integer
+ *                    description: El id auto-generado de paciente.
+ *                    readOnly: true
+ *                  nombres:
+ *                    type: string
+ *                    description: Nombres actuales del paciente.
+ *                  apellidos:
+ *                    type: string
+ *                    description: Apellidos actuales del paciente.
+ *                  tipo_documento:
+ *                    type: string
+ *                    description: Tipo de documento del paciente.
+ *                  nro_documento:
+ *                    type: string
+ *                    description: Numero de documento del paciente.
+ *                  fecha_nacimiento:
+ *                    type: string
+ *                    format: date-time
+ *                    description: Fecha de nacimiento del paciente.
+ *                  genero:
+ *                    type: string
+ *                    description: Genero del paciente.
+ *                  nro_telefono:
+ *                    type: string
+ *                    description: Numero de telefono del paciente.
+ *                  direccion_latitud:
+ *                    type: string
+ *                    description: Latitud de la direccion del paciente.
+ *                  direccion_longitud:
+ *                    type: string
+ *                    description: Longitud de la direccion del paciente.
+ *                  antecedentes_medicos:
+ *                    type: integer
+ *                    description: Antecedentes médicos del paciente.
+ *                  fk_centro_medico:
+ *                    type: integer
+ *                    description: ID del centro médico en donde se creó el caso.
  */
 
 /**

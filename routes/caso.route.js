@@ -1,14 +1,24 @@
 import {
-  getCasos,
-  createCaso,
-  updateCaso,
+  create,
   deleteCaso,
+  list,
+  findOne,
+  update,
 } from "../controllers/caso.controller.js";
 
 export default (app) => {
+  app.use((req, res, next) => {
+    res.append("Access-Control-Allow-Origin", ["*"]);
+    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.append("Access-Control-Allow-Headers", "Content-Type");
+    res.append("Access-Control-Expose-Headers", "Content-Range");
+    res.append("Content-Range", 5);
+    next();
+  });
+
   /**
    * @swagger
-   * /caso:
+   * /casos:
    *  get:
    *      summary: Webservice para obtener la lista de casos.
    *      tags: [Casos]
@@ -19,11 +29,11 @@ export default (app) => {
    *              description: ok
    *
    */
-  app.get("/caso", getCasos);
+  app.get("/casos", list);
 
   /**
    * @swagger
-   * /caso/new:
+   * /casos:
    *  post:
    *      summary: Webservice para crear caso.
    *      tags: [Casos]
@@ -43,11 +53,33 @@ export default (app) => {
    *                schema:
    *                  $ref: '#/components/schemas/Caso'
    */
-  app.post("/caso/new", createCaso);
+  app.post("/casos", create);
 
   /**
    * @swagger
-   * /caso/update/{id}:
+   * /casos/{id}:
+   *  get:
+   *      summary: Webservice para obtener un solo caso.
+   *      tags: [Casos]
+   *      security:
+   *          - ApiKeyAuth: []
+   *      parameters:
+   *          - in: path
+   *            name: id
+   *            schema:
+   *              type: integer
+   *              required: true
+   *              description: El ID del caso a editar
+   *      responses:
+   *          '200':
+   *              description: ok
+   *
+   */
+  app.get("/casos/:id", findOne);
+
+  /**
+   * @swagger
+   * /casos/{id}:
    *   put:
    *      summary: Webservice para editar/actualizar caso.
    *      tags: [Casos]
@@ -70,7 +102,7 @@ export default (app) => {
    *          "200":
    *            description: Caso editado exitosamente.
    */
-  app.put("/caso/update/:id", updateCaso);
+  app.put("/casos/:id", update);
 
   /**
    * @swagger

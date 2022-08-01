@@ -2,12 +2,14 @@ import DB from "../models/index.js";
 import sequelize from "sequelize";
 
 const CentroMedico = DB.centroMedico;
+const TipoCentroMedico = DB.tipoCentroMedico;
 
 // Listar centros medicos
 export function list(req, res) {
   const sort = JSON.parse(req.query.sort);
   CentroMedico.findAll({
     order: [[sequelize.col(sort[0]), sort[1]]],
+    include: TipoCentroMedico,
   })
     .then((centrosMedicos) => {
       res.setHeader("Content-Range", centrosMedicos.length);

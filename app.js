@@ -106,20 +106,23 @@ import DB from "./models/index.js";
 const Role = DB.role;
 const TipoCentroMedico = DB.tipoCentroMedico;
 const Sintoma = DB.sintoma;
+const Paciente = DB.paciente;
+const CentroMedico = DB.centroMedico;
+const Medico = DB.medico;
 
 function initial() {
   Role.create({
-    nombre: "USER",
+    nombre: "ADMINISTRADOR",
     description: null,
   });
 
   Role.create({
-    nombre: "MODERATOR",
+    nombre: "COORDINADOR",
     descripcion: null,
   });
 
   Role.create({
-    nombre: "ADMIN",
+    nombre: "MEDICO",
     descripcion: null,
   });
 
@@ -128,6 +131,20 @@ function initial() {
   });
   TipoCentroMedico.create({
     nombre: "Hospital",
+  });
+
+  Paciente.create({
+    nombres: "Emmely Daniela",
+    apellidos: "Millan Aguilera",
+    tipo_documento: "V",
+    nro_documento: "267123872",
+    fecha_nacimiento: "2022-07-31T20:43:07.945Z",
+    genero: "Mujer",
+    nro_telefono: "23423423432",
+  });
+
+  CentroMedico.create({
+    nombre: "Centro médico de prueba",
   });
 
   Sintoma.create({ nombre: "Fiebre" });

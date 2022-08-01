@@ -81,7 +81,7 @@ export function updatePaciente(req, res, next) {
   } = req.body;
   let id = req.params.id;
 
-  Pacientes.update(
+  Paciente.update(
     nombres,
     apellidos,
     tipo_documento,
