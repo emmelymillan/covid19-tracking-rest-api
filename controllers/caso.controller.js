@@ -5,16 +5,22 @@ const Caso = DB.caso;
 const Paciente = DB.paciente;
 const Medico = DB.medico;
 const CentroMedico = DB.centroMedico;
+const Balance = DB.balance;
 
-export function list(req, res) {
-  // const sort = JSON.parse(req.query.sort);
+export async function list(req, res) {
+  const sort = JSON.parse(req.query.sort);
+  const range = JSON.parse(req.query.range);
+
+  const count = await Caso.count();
 
   Caso.findAll({
+    offset: range[0],
+    limit: range[1] - range[0] + 1,
+    order: [[sequelize.col(sort[0]), sort[1]]],
     include: [Paciente, Medico, CentroMedico],
-    // order: [[sequelize.col(sort[0]), sort[1]]],
   })
     .then((casos) => {
-      res.setHeader("Content-Range", casos.length);
+      res.setHeader("Content-Range", count);
       res.status(200).send(casos);
     })
     .catch((err) => {
@@ -33,14 +39,24 @@ export async function create(req, res) {
     paciente,
   } = req.body;
 
-  const existePaciente = await Paciente.findOne({
+  const pacienteRow = await Paciente.findOne({
     where: {
       tipo_documento: paciente.tipo_documento,
       nro_documento: paciente.nro_documento,
     },
   });
 
-  if (existePaciente === null) {
+  var existCaso = null;
+  if (pacienteRow != null) {
+    existCaso = await Caso.findOne({
+      where: {
+        estado: true,
+        fk_paciente: pacienteRow.id,
+      },
+    });
+  }
+
+  if (existCaso === null) {
     Caso.create(
       {
         estado,
@@ -56,6 +72,7 @@ export async function create(req, res) {
       }
     )
       .then((caso) => {
+        Balance.increment({ total: 1 }, { where: { id: 1 } });
         res.status(200).json({ id: caso.id });
       })
       .catch((err) => {
@@ -117,7 +134,10 @@ export async function update(req, res) {
 
   Caso.update(
     {
-      estado,
+      estado:
+        (fecha_recuperacion != null || fecha_fallecimiento) != null
+          ? false
+          : true,
       fecha_ingreso,
       fecha_recuperacion,
       fecha_fallecimiento,
@@ -132,6 +152,12 @@ export async function update(req, res) {
     }
   )
     .then((caso) => {
+      if (fecha_recuperacion && !fecha_fallecimiento) {
+        Balance.increment({ recuperados: 1 }, { where: { id: 1 } });
+      } else if (!fecha_recuperacion && fecha_fallecimiento) {
+        Balance.increment({ fallecidos: 1 }, { where: { id: 1 } });
+      }
+
       res.status(200).json({ id: caso });
     })
     .catch((err) => {

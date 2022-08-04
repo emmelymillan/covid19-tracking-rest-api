@@ -15,6 +15,7 @@ import sintoma from "./routes/sintoma.route.js";
 import caso from "./routes/caso.route.js";
 import user from "./routes/usuario.routes.js";
 import auth from "./routes/auth.routes.js";
+import estadisticas from "./routes/estadisticas.route.js";
 
 import { createServer } from "http"; // CORE MODULE, USED TO CREATE THE HTTP SERVER
 const server = createServer(app); // CREATE HTTP SERVER USING APP
@@ -45,6 +46,7 @@ medico(app);
 paciente(app);
 sintoma(app);
 caso(app);
+estadisticas(app);
 
 // RUTAS DE LOGIN Y TEST
 auth(app);
@@ -109,8 +111,10 @@ const Sintoma = DB.sintoma;
 const Paciente = DB.paciente;
 const CentroMedico = DB.centroMedico;
 const Medico = DB.medico;
+const Caso = DB.caso;
+const Balance = DB.balance;
 
-function initial() {
+async function initial() {
   Role.create({
     nombre: "ADMINISTRADOR",
     description: null,
@@ -133,14 +137,13 @@ function initial() {
     nombre: "Hospital",
   });
 
-  Paciente.create({
+  Medico.create({
     nombres: "Emmely Daniela",
     apellidos: "Millan Aguilera",
     tipo_documento: "V",
     nro_documento: "267123872",
-    fecha_nacimiento: "2022-07-31T20:43:07.945Z",
-    genero: "Mujer",
-    nro_telefono: "23423423432",
+    correo: "emmely@gmail.com",
+    clave: "123456",
   });
 
   CentroMedico.create({
@@ -168,6 +171,58 @@ function initial() {
   Sintoma.create({ nombre: "Pérdida del habla o la movilidad, o confusión" });
   Sintoma.create({ nombre: "Temperatura alta (por encima de los 38°C)" });
   Sintoma.create({ nombre: "Dolor en el pecho" });
+
+  generarCasos();
+}
+
+async function generarCasos() {
+  await Balance.create({ total: 0, recuperados: 0, fallecidos: 0 });
+
+  for (let index = 0; index < 10000; index++) {
+    const paciente = await Paciente.create({
+      nombres: "Paciente-" + index,
+      apellidos: "Apellido-" + index,
+      tipo_documento: "V",
+      nro_documento: "26-" + index,
+      fecha_nacimiento: "1998-07-31T20:43:07.945Z",
+      genero:
+        Math.floor(Math.random() * 100) % 2 === 0 ? "Femenino" : "Masculino",
+      nro_telefono: "23423423432",
+    });
+
+    const recuperadoFlag = Math.floor(Math.random() * 100) + 1 >= 10;
+    const fallecidoFlag = Math.floor(Math.random() * 100) % 7 < 2;
+
+    if (recuperadoFlag && !fallecidoFlag) {
+      Balance.increment({ total: 1, recuperados: 1 }, { where: { id: 1 } });
+    } else if (!recuperadoFlag && fallecidoFlag) {
+      Balance.increment({ total: 1, fallecidos: 1 }, { where: { id: 1 } });
+    } else {
+      Balance.increment({ total: 1 }, { where: { id: 1 } });
+    }
+
+    Caso.create({
+      estado: true,
+      fecha_ingreso: randomDate(new Date(2022, 0, 1), new Date()),
+      fecha_recuperacion:
+        recuperadoFlag && !fallecidoFlag
+          ? randomDate(new Date(2022, 0, 1), new Date())
+          : null,
+      fecha_fallecimiento:
+        !recuperadoFlag && fallecidoFlag
+          ? randomDate(new Date(2022, 0, 1), new Date())
+          : null,
+      fk_medico: 1,
+      fk_paciente: paciente.id,
+      fk_centro_medico: 1,
+    });
+  }
+}
+
+function randomDate(start, end) {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
 }
 
 export default app;

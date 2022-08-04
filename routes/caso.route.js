@@ -24,6 +24,12 @@ export default (app) => {
    *      tags: [Casos]
    *      security:
    *          - ApiKeyAuth: []
+   *      parameters:
+   *            name: sort
+   *            schema:
+   *              type: array
+   *              required: true
+   *              description: orden
    *      responses:
    *          '200':
    *              description: ok

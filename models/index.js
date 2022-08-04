@@ -8,6 +8,7 @@ import TipoCentroMedico from "./tipoCentroMedico.model.js";
 import Sintoma from "./sintoma.model.js";
 import Paciente from "./paciente.model.js";
 import Caso from "./caso.model.js";
+import Balance from "./balance.model.js";
 
 const sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
   host: db.HOST,
@@ -27,6 +28,7 @@ DB.centroMedico = CentroMedico(sequelize, Sequelize);
 DB.paciente = Paciente(sequelize, Sequelize);
 DB.sintoma = Sintoma(sequelize, Sequelize);
 DB.caso = Caso(sequelize, Sequelize);
+DB.balance = Balance(sequelize, Sequelize);
 
 // Relación de medicos y roles
 DB.role.hasMany(DB.medico, {
