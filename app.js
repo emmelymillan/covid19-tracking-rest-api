@@ -98,11 +98,13 @@ app.use((err, req, res, next) => {
   DB.sequelize.sync();
 */
 
-DB.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync Db");
-  // Comentar linea de abajo despues de ejecutar una vez Y COLOCAR VALOR DE FORCE EN false
-  initial();
-});
+// DB.sequelize.sync({ force: false }).then(() => {
+//   console.log("Drop and Resync Db");
+//   // Comentar linea de abajo despues de ejecutar una vez Y COLOCAR VALOR DE FORCE EN false
+//   // initial();
+// });
+
+DB.sequelize.sync();
 
 import DB from "./models/index.js";
 
