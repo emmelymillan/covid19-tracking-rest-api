@@ -1,10 +1,7 @@
 import DB from "../models/index.js";
 import sequelize from "sequelize";
-import Sequelize from "sequelize";
 
-const Caso = DB.caso;
 const Balance = DB.balance;
-const Op = Sequelize.Op;
 const { QueryTypes } = sequelize;
 
 export async function getCasesBalance(req, res) {
