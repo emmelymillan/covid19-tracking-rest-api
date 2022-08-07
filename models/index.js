@@ -10,11 +10,29 @@ import Paciente from "./paciente.model.js";
 import Caso from "./caso.model.js";
 import Balance from "./balance.model.js";
 
-const sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
-  host: db.HOST,
-  dialect: db.dialect,
-  operatorsAliases: false,
-});
+// const sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
+//   host: db.HOST,
+//   dialect: db.dialect,
+//   operatorsAliases: false,
+// });
+
+var sequelize;
+
+if (process.env.DATABASE_URL) {
+  // the application is executed on Heroku ... use the postgres database
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect:  'postgres',
+    protocol: 'postgres',
+    logging:  true //false
+  });
+} else {
+  // the application is executed on the local machine
+  sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
+    host: db.HOST,
+    dialect: db.dialect,
+    operatorsAliases: false,
+  });
+}
 
 const DB = {};
 
