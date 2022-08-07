@@ -87,17 +87,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.stack);
 });
 
-/*
-  initial() function helps us to create 3 rows in database.
-  In development, you may need to drop existing tables and re-sync database. 
-  So you can use force: true as code above.
-
-  For production, just insert these rows manually and use sync() without parameters 
-  to avoid dropping data: 
-
-  DB.sequelize.sync();
-*/
-
 // DB.sequelize.sync({ force: false }).then(() => {
 //   console.log("Drop and Resync Db");
 //   // Comentar linea de abajo despues de ejecutar una vez Y COLOCAR VALOR DE FORCE EN false
