@@ -2,14 +2,20 @@ import { signin } from "../controllers/auth.controller.js";
 
 export default function (app) {
   app.use(function (req, res, next) {
-    res.header(
-      "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
-    );
-    res.append("Access-Control-Allow-Origin", ["*"]);
-    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.append("Access-Control-Allow-Headers", "Content-Type");
-    res.append("Access-Control-Expose-Headers", "Content-Range");
+    const allowedOrigins = [
+      "http://127.0.0.1:3001",
+      "http://localhost:3000",
+      "http://127.0.0.1:9000",
+      "https://covid19-tracking-em.herokuapp.com",
+    ];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    //res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:8020');
+    res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", true);
     next();
   });
 
