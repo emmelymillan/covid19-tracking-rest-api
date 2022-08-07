@@ -78,6 +78,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 // ************************************************** //
 
 app.set("port", port);
+// app.listen(port);
 server.listen(port);
 console.log("Server listening on port " + port);
 
