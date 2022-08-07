@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import express from "express";
 const app = express();
 import cors from "cors";
@@ -21,18 +20,18 @@ import { createServer } from "http"; // CORE MODULE, USED TO CREATE THE HTTP SER
 const server = createServer(app); // CREATE HTTP SERVER USING APP
 const port = process.env.PORT || "3000"; // INITIALIZE DEFAULT PORT OR PORT FROM ENVIRONMENT VARIABLE
 
-import logger from "morgan"; // TERMINAL LOGGER: SHOWS THE ROUTE AND STATUS CODE FOR EVERY REQUEST
+// import logger from "morgan"; // TERMINAL LOGGER: SHOWS THE ROUTE AND STATUS CODE FOR EVERY REQUEST
 
-app.use(logger("dev")); // USE MORGAN
+// app.use(logger("dev")); // USE MORGAN
 app.use(urlencoded({ extended: true })); // PARSE application/x-www-form-urlencoded
 app.use(json()); // PARSE application/json
 
 // CORS
-const corsOptions = {
-  origin: "http://localhost:3001",
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: "http://localhost:3001",
+//   optionsSuccessStatus: 200,
+// };
+// app.use(cors(corsOptions));
 
 // SECURITY
 app.disable("x-powered-by");
