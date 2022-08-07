@@ -33,6 +33,22 @@ app.use(json()); // PARSE application/json
 // };
 // app.use(cors(corsOptions));
 
+const corsOpts = {
+  origin: '*',
+
+  methods: [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE'
+  ],
+
+  allowedHeaders: [
+    '*',
+  ],
+};
+app.use(cors(corsOpts));
+
 // SECURITY
 app.disable("x-powered-by");
 app.set("Access-Control-Expose-Headers", "Content-Range");
