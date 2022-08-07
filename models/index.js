@@ -23,8 +23,13 @@ if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect:  'postgres',
     protocol: 'postgres',
-    logging:  true //false
-  });
+    logging:  true, //false,
+    dialectOptions: {
+      ssl: {
+        require: true, // This will help you. But you will see nwe error
+        rejectUnauthorized: false // This line will fix new error
+      }
+  }})
 } else {
   // the application is executed on the local machine
   sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
