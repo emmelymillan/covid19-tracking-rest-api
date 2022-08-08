@@ -96,6 +96,25 @@ export async function getCasesBalance(req, res) {
     { type: QueryTypes.SELECT }
   );
 
+  const mapaCentrosMedicos = await DB.sequelize.query(
+    `
+      select count(c.*), cm.nombre, cm.direccion_latitud as lat, cm.direccion_longitud as lng
+      from centro_medico cm, caso c
+      where c.fk_centro_medico = cm.id and c.estado = true
+      group by cm.nombre, cm.direccion_latitud, cm.direccion_longitud;
+    `,
+    { type: QueryTypes.SELECT }
+  );
+
+  const mapaCasosActivos = await DB.sequelize.query(
+    `
+      select c.id, p.direccion_latitud as lat, p.direccion_longitud as lng
+      from caso c, paciente p
+      where c.fk_paciente = p.id and c.estado = true;
+    `,
+    { type: QueryTypes.SELECT }
+  );
+
   res.status(200).json({
     id: balance.id,
     casosTotales: balance.total,
@@ -111,12 +130,7 @@ export async function getCasesBalance(req, res) {
     chartGenerosTotales: chartGenerosTotales,
     chartGenerosRecuperados: chartGenerosRecuperados,
     chartGenerosFallecidos: chartGenerosFallecidos,
+    mapaCentrosMedicos: mapaCentrosMedicos,
+    mapaCasosActivos: mapaCasosActivos,
   });
-
-  // then((casos) => {
-  //   res.status(200).json({casosTotales: casos});
-  // })
-  // .catch((err) => {
-  //   res.status(500).send({ message: err.message });
-  // });;
 }
