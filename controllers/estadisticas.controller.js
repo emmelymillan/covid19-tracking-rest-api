@@ -29,7 +29,7 @@ export async function getCasesBalance(req, res) {
 
   const chartCasosRecuperadosAcumulado = await DB.sequelize.query(
     `
-      select to_char(fecha_recuperacion, 'month') as "Months", count(*)
+      select to_char(fecha_recuperacion, 'month') as "month", count(*)
       from caso
       where date_part('year', fecha_recuperacion) = '2022'
       group by date_part('month', fecha_recuperacion), to_char(fecha_recuperacion, 'month');
@@ -49,7 +49,7 @@ export async function getCasesBalance(req, res) {
 
   const chartCasosFallecidosAcumulado = await DB.sequelize.query(
     `
-      select to_char(fecha_fallecimiento , 'month') as "Months", count(*)
+      select to_char(fecha_fallecimiento , 'month') as "month", count(*)
       from caso
       where date_part('year', fecha_fallecimiento) = '2022'
       group by date_part('month', fecha_fallecimiento), to_char(fecha_fallecimiento, 'month');
