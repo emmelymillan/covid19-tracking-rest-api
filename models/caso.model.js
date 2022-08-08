@@ -18,6 +18,10 @@ const Caso = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      fecha_fallecimiento_otro: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
     },
     {
       timestamps: true,

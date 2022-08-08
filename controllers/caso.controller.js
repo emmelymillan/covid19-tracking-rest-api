@@ -109,6 +109,7 @@ export async function update(req, res) {
     fecha_ingreso,
     fecha_recuperacion,
     fecha_fallecimiento,
+    fecha_fallecimiento_otro,
     fk_medico,
     fk_centro_medico,
     paciente,
@@ -135,12 +136,15 @@ export async function update(req, res) {
   Caso.update(
     {
       estado:
-        (fecha_recuperacion != null || fecha_fallecimiento) != null
+        fecha_recuperacion != null ||
+        fecha_fallecimiento != null ||
+        fecha_fallecimiento_otro != null
           ? false
           : true,
       fecha_ingreso,
       fecha_recuperacion,
       fecha_fallecimiento,
+      fecha_fallecimiento_otro,
       fk_medico,
       fk_centro_medico,
       paciente,
