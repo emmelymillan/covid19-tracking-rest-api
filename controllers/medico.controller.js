@@ -9,14 +9,20 @@ const Medico = DB.medico;
 const Role = DB.role;
 
 // Listar medicos
-export function list(req, res) {
+export async function list(req, res) {
   const sort = JSON.parse(req.query.sort);
+  const range = JSON.parse(req.query.range);
+
+  const count = await Medico.count();
+
   Medico.findAll({
+    offset: range[0],
+    limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: Role,
   })
     .then((medicos) => {
-      res.setHeader("Content-Range", medicos.length);
+      res.setHeader("Content-Range", count);
       res.status(200).send(medicos);
     })
     .catch((err) => {

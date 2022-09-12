@@ -5,14 +5,20 @@ const CentroMedico = DB.centroMedico;
 const TipoCentroMedico = DB.tipoCentroMedico;
 
 // Listar centros medicos
-export function list(req, res) {
+export async function list(req, res) {
   const sort = JSON.parse(req.query.sort);
+  const range = JSON.parse(req.query.range);
+
+  const count = await CentroMedico.count();
+
   CentroMedico.findAll({
+    offset: range[0],
+    limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: TipoCentroMedico,
   })
     .then((centrosMedicos) => {
-      res.setHeader("Content-Range", centrosMedicos.length);
+      res.setHeader("Content-Range", count);
       res.status(200).send(centrosMedicos);
     })
     .catch((err) => {
