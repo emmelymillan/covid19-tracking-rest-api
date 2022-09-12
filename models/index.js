@@ -1,5 +1,5 @@
-import * as db from "../config/database.config.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 import Sequelize from "sequelize";
 import Role from "./role.model.js";
 import CentroMedico from "./centroMedico.model.js";
@@ -21,22 +21,28 @@ var sequelize;
 if (process.env.DATABASE_URL) {
   // the application is executed on Heroku ... use the postgres database
   sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect:  'postgres',
-    protocol: 'postgres',
-    logging:  true, //false,
+    dialect: "postgres",
+    protocol: "postgres",
+    logging: true, //false,
     dialectOptions: {
       ssl: {
         require: true, // This will help you. But you will see nwe error
-        rejectUnauthorized: false // This line will fix new error
-      }
-  }})
+        rejectUnauthorized: false, // This line will fix new error
+      },
+    },
+  });
 } else {
   // the application is executed on the local machine
-  sequelize = new Sequelize(db.DB, db.USER, db.PASSWORD, {
-    host: db.HOST,
-    dialect: db.dialect,
-    operatorsAliases: false,
-  });
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      dialect: "postgres",
+      operatorsAliases: false,
+    }
+  );
 }
 
 const DB = {};

@@ -21,7 +21,7 @@ export async function getCasesBalance(req, res) {
     `
       select fecha_ingreso ::date as "date", count(*)
       from caso
-      where date_part('year', fecha_ingreso) = '2022' and fecha_recuperacion is null and fecha_fallecimiento is null
+      where date_part('year', fecha_ingreso) = '2022' and fecha_recuperacion is null and fecha_fallecimiento is null and fecha_fallecimiento_otro is null
       group by fecha_ingreso::date, date_part('day', fecha_ingreso);
     `,
     { type: QueryTypes.SELECT }

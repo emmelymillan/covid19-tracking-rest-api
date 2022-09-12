@@ -31,7 +31,7 @@ export async function list(req, res) {
 }
 
 // Guardar medico
-export function create(req, res) {
+export async function create(req, res) {
   const {
     nombres,
     apellidos,
@@ -45,39 +45,53 @@ export function create(req, res) {
     rol,
   } = req.body;
 
-  Medico.create({
-    nombres,
-    apellidos,
-    tipo_documento,
-    nro_documento,
-    es_coordinador,
-    especialidad,
-    codigo_medico,
-    correo,
-    clave: hashSync(clave, 8),
-    rol,
-  })
-    .then((medico) => {
-      if (rol) {
-        Role.findOne({
-          where: {
-            nombre: rol,
-          },
-        }).then((roles) => {
-          medico.setRol(roles).then(() => {
-            res.status(200).json({ id: medico.id });
-          });
-        });
-      } else {
-        // medico con rol 1
-        medico.setRol(1).then(() => {
-          res.send({ message: "Médico registrado exitosamente!" });
-        });
-      }
+  const medico = await Medico.findOne({
+    where: {
+      tipo_documento: tipo_documento,
+      nro_documento: nro_documento,
+    },
+  });
+
+  if (medico === null) {
+    Medico.create({
+      nombres,
+      apellidos,
+      tipo_documento,
+      nro_documento,
+      es_coordinador,
+      especialidad,
+      codigo_medico,
+      correo,
+      clave: hashSync(clave, 8),
+      rol,
     })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+      .then((medico) => {
+        if (rol) {
+          Role.findOne({
+            where: {
+              nombre: rol,
+            },
+          }).then((roles) => {
+            medico.setRol(roles).then(() => {
+              res.status(200).json({ id: medico.id });
+            });
+          });
+        } else {
+          // medico con rol 1
+          medico.setRol(1).then(() => {
+            res.send({ message: "Médico registrado exitosamente!" });
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  } else {
+    return res.status(400).json({
+      code: 400,
+      message: "El medico ya se encuentra registrado.",
     });
+  }
 }
 
 // Obtener medico
