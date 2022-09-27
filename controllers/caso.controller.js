@@ -79,7 +79,7 @@ export async function create(req, res) {
         res.status(500).send({ message: err.message });
       });
   } else {
-    return res.status(400).json({
+    return res.status(400).send({
       code: 400,
       message:
         "El paciente creado ya se encuentra registrado con un caso activo.",
