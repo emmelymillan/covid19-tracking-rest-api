@@ -39,6 +39,7 @@ export async function create(req, res) {
     paciente,
   } = req.body;
 
+  // buscamos el paciente por tipo de documento y nro de documento
   const pacienteRow = await Paciente.findOne({
     where: {
       tipo_documento: paciente.tipo_documento,
@@ -46,9 +47,11 @@ export async function create(req, res) {
     },
   });
 
-  var existCaso = null;
+  var existCaso = [];
+
+  // si el paciente existe, comprobamos que tenga casos activos
   if (pacienteRow != null) {
-    existCaso = await Caso.findOne({
+    existCaso = await Caso.findAll({
       where: {
         estado: true,
         fk_paciente: pacienteRow.id,
@@ -56,34 +59,57 @@ export async function create(req, res) {
     });
   }
 
-  if (existCaso === null) {
-    Caso.create(
-      {
+  var casos = Array.from(existCaso);
+
+  if (casos.length === 0) {
+    if (pacienteRow != null) {
+      // Si el paciente sí existe --> creamos el caso con los datos del paciente existente.
+      Caso.create({
         estado,
         fecha_ingreso,
         fecha_recuperacion,
         fecha_fallecimiento,
         fk_medico,
         fk_centro_medico,
-        paciente,
-      },
-      {
-        include: Paciente,
-      }
-    )
-      .then((caso) => {
-        Balance.increment({ total: 1 }, { where: { id: 1 } });
-        res.status(200).json({ id: caso.id });
+        fk_paciente: pacienteRow.id,
       })
-      .catch((err) => {
-        res.status(500).send({ message: err.message });
-      });
+        .then((caso) => {
+          Balance.increment({ total: 1 }, { where: { id: 1 } });
+          res.status(200).json({ id: caso.id });
+        })
+        .catch((err) => {
+          res.status(500).send({ message: err.message });
+        });
+    } else {
+      // Si el paciente no existe --> creamos el caso con un paciente nuevo.
+      Caso.create(
+        {
+          estado,
+          fecha_ingreso,
+          fecha_recuperacion,
+          fecha_fallecimiento,
+          fk_medico,
+          fk_centro_medico,
+          paciente,
+        },
+        {
+          include: Paciente,
+        }
+      )
+        .then((caso) => {
+          Balance.increment({ total: 1 }, { where: { id: 1 } });
+          res.status(200).json({ id: caso.id });
+        })
+        .catch((err) => {
+          res.status(500).send({ message: err.message });
+        });
+    }
   } else {
-    return res.status(400).send({
-      code: 400,
-      message:
-        "El paciente creado ya se encuentra registrado con un caso activo.",
-    });
+    return res
+      .status(400)
+      .send(
+        "El paciente ingresado ya se encuentra registrado con un caso activo."
+      );
   }
 }
 
