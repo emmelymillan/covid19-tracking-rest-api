@@ -2,6 +2,7 @@ import DB from "../models/index.js";
 import Sequelize from "sequelize";
 import sequelize from "sequelize";
 import pkg from "bcryptjs";
+import authJwt from "../middleware/authJwt.js";
 
 const { hashSync } = pkg;
 const Op = Sequelize.Op;
@@ -12,14 +13,37 @@ const Role = DB.role;
 export async function list(req, res) {
   const sort = JSON.parse(req.query.sort);
   const range = JSON.parse(req.query.range);
+  const filter = JSON.parse(req.query.filter);
 
-  const count = await Medico.count();
+  const medicoId = authJwt.obtenerIdPorToken(filter.accessToken);
+
+  const medico = await Medico.findByPk(medicoId);
+
+  const rol = await medico
+    .getRol()
+    .then((role) => {
+      return role.nombre;
+    })
+    .catch(() => {
+      return "";
+    });
+
+  const count = await Medico.count({
+    where: rol === "COORDINADOR" && {
+      fk_centro_medico: medico.fk_centro_medico,
+      fk_rol: 3,
+    },
+  });
 
   Medico.findAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: Role,
+    where: rol === "COORDINADOR" && {
+      fk_centro_medico: medico.fk_centro_medico,
+      fk_rol: 3,
+    },
   })
     .then((medicos) => {
       res.setHeader("Content-Range", count);

@@ -24,6 +24,17 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+const obtenerIdPorToken = (accessToken) => {
+  const medicoId = verify(accessToken, secret, (err, decoded) => {
+    if (err) {
+      return null;
+    }
+    return decoded.id;
+  });
+
+  return medicoId;
+};
+
 const isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRol().then((rol) => {
@@ -75,6 +86,7 @@ const authJwt = {
   isAdmin: isAdmin,
   isModerator: isModerator,
   isModeratorOrAdmin: isModeratorOrAdmin,
+  obtenerIdPorToken: obtenerIdPorToken,
 };
 
 export default authJwt;

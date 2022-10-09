@@ -1,5 +1,6 @@
 import DB from "../models/index.js";
 import sequelize from "sequelize";
+import authJwt from "../middleware/authJwt.js";
 
 const Caso = DB.caso;
 const Paciente = DB.paciente;
@@ -10,14 +11,42 @@ const Balance = DB.balance;
 export async function list(req, res) {
   const sort = JSON.parse(req.query.sort);
   const range = JSON.parse(req.query.range);
+  const filter = JSON.parse(req.query.filter);
 
-  const count = await Caso.count();
+  const medicoId = authJwt.obtenerIdPorToken(filter.accessToken);
+
+  const medico = await Medico.findByPk(medicoId);
+
+  const rol = await medico
+    .getRol()
+    .then((role) => {
+      return role.nombre;
+    })
+    .catch(() => {
+      return "";
+    });
+
+  // if (rol === "ADMINISTRADOR") {
+  const count = await Caso.count({
+    where:
+      rol === "COORDINADOR"
+        ? { fk_centro_medico: medico.fk_centro_medico }
+        : rol === "MEDICO"
+        ? { fk_medico: medicoId }
+        : null,
+  });
 
   Caso.findAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: [Paciente, Medico, CentroMedico],
+    where:
+      rol === "COORDINADOR"
+        ? { fk_centro_medico: medico.fk_centro_medico }
+        : rol === "MEDICO"
+        ? { fk_medico: medicoId }
+        : null,
   })
     .then((casos) => {
       res.setHeader("Content-Range", count);
