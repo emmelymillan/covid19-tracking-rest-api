@@ -11,11 +11,12 @@ export function signin(req, res) {
   Medico.findOne({
     where: {
       correo: req.body.correo,
+      activo: true,
     },
   })
     .then((medico) => {
       if (!medico) {
-        return res.status(404).send({ message: "Medico no encontrado." });
+        return res.status(404).send("Usuario no encontrado o inactivo.");
       }
 
       var passwordIsValid = compareSync(req.body.clave, medico.clave);
