@@ -1,21 +1,44 @@
 import DB from "../models/index.js";
 import sequelize from "sequelize";
+import authJwt from "../middleware/authJwt.js";
 
 const CentroMedico = DB.centroMedico;
 const TipoCentroMedico = DB.tipoCentroMedico;
+const Medico = DB.medico;
 
 // Listar centros medicos
 export async function list(req, res) {
   const sort = JSON.parse(req.query.sort);
   const range = JSON.parse(req.query.range);
+  const filter = JSON.parse(req.query.filter);
 
-  const count = await CentroMedico.count();
+  const medicoId = authJwt.obtenerIdPorToken(filter.accessToken);
+
+  const medico = await Medico.findByPk(medicoId);
+
+  const rol = await medico
+    .getRol()
+    .then((role) => {
+      return role.nombre;
+    })
+    .catch(() => {
+      return "";
+    });
+
+  const count = await CentroMedico.count({
+    where: rol != "ADMINISTRADOR" && {
+      id: medico.fk_centro_medico,
+    },
+  });
 
   CentroMedico.findAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: TipoCentroMedico,
+    where: rol != "ADMINISTRADOR" && {
+      id: medico.fk_centro_medico,
+    },
   })
     .then((centrosMedicos) => {
       res.setHeader("Content-Range", count);

@@ -40,6 +40,7 @@ export function signin(req, res) {
           coordinador: medico.es_coordinador,
           activo: medico.activo,
           rol: "ROLE_" + rol.nombre.toUpperCase(),
+          centroMedicoId: medico.fk_centro_medico,
           accessToken: token,
         });
       });

@@ -10,9 +10,7 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
     },
   }).then((medico) => {
     if (medico) {
-      res.status(400).send({
-        message: "Error! el correo electrónico ya existe.",
-      });
+      res.status(400).send("Error! el correo electrónico ya existe.");
       return;
     }
     next();

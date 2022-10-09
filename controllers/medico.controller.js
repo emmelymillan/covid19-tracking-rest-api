@@ -27,10 +27,18 @@ export async function list(req, res) {
     });
 
   const count = await Medico.count({
-    where: rol === "COORDINADOR" && {
-      fk_centro_medico: medico.fk_centro_medico,
-      fk_rol: 3,
-    },
+    where:
+      rol === "COORDINADOR"
+        ? {
+            fk_centro_medico: medico.fk_centro_medico,
+            fk_rol: 3, // medicos
+          }
+        : rol === "MEDICO"
+        ? {
+            id: medicoId,
+            fk_rol: 3, //medicos
+          }
+        : null,
   });
 
   Medico.findAll({
@@ -38,10 +46,18 @@ export async function list(req, res) {
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: Role,
-    where: rol === "COORDINADOR" && {
-      fk_centro_medico: medico.fk_centro_medico,
-      fk_rol: 3,
-    },
+    where:
+      rol === "COORDINADOR"
+        ? {
+            fk_centro_medico: medico.fk_centro_medico,
+            fk_rol: 3, // medicos
+          }
+        : rol === "MEDICO"
+        ? {
+            id: medicoId,
+            fk_rol: 3, //medicos
+          }
+        : null,
   })
     .then((medicos) => {
       res.setHeader("Content-Range", count);
@@ -118,7 +134,7 @@ export async function create(req, res) {
         } else {
           // medico con rol 1
           medico.setRol(1).then(() => {
-            res.send({ message: "Médico registrado exitosamente!" });
+            res.send("Médico registrado exitosamente.");
           });
         }
       })
@@ -126,10 +142,7 @@ export async function create(req, res) {
         res.status(500).send({ message: err.message });
       });
   } else {
-    return res.status(400).json({
-      code: 400,
-      message: "El medico ya se encuentra registrado.",
-    });
+    return res.status(400).send("El medico ya se encuentra registrado/");
   }
 }
 
