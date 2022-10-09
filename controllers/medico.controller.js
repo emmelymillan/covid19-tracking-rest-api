@@ -1,11 +1,9 @@
 import DB from "../models/index.js";
-import Sequelize from "sequelize";
 import sequelize from "sequelize";
 import pkg from "bcryptjs";
 import authJwt from "../middleware/authJwt.js";
 
 const { hashSync } = pkg;
-const Op = Sequelize.Op;
 const Medico = DB.medico;
 const Role = DB.role;
 
@@ -61,12 +59,12 @@ export async function create(req, res) {
     apellidos,
     tipo_documento,
     nro_documento,
-    es_coordinador,
     especialidad,
     codigo_medico,
     correo,
     clave,
     rol,
+    fk_centro_medico,
   } = req.body;
 
   const medico = await Medico.findOne({
@@ -77,17 +75,34 @@ export async function create(req, res) {
   });
 
   if (medico === null) {
+    if (rol === "COORDINADOR") {
+      const medicos = await Medico.findAll({
+        where: {
+          es_coordinador: true,
+          fk_centro_medico: fk_centro_medico,
+          activo: true,
+        },
+      });
+
+      if (Array.from(medicos).length > 0) {
+        return res
+          .status(500)
+          .send("El centro medico ya tiene asociado un usuario coordinador.");
+      }
+    }
+
     Medico.create({
       nombres,
       apellidos,
       tipo_documento,
       nro_documento,
-      es_coordinador,
+      es_coordinador: rol === "COORDINADOR" ? true : false,
       especialidad,
       codigo_medico,
       correo,
       clave: hashSync(clave, 8),
       rol,
+      fk_centro_medico,
     })
       .then((medico) => {
         if (rol) {
@@ -140,7 +155,6 @@ export function update(req, res) {
     apellidos,
     tipo_documento,
     nro_documento,
-    es_coordinador,
     especialidad,
     codigo_medico,
     activo,
@@ -152,7 +166,6 @@ export function update(req, res) {
       apellidos,
       tipo_documento,
       nro_documento,
-      es_coordinador,
       especialidad,
       codigo_medico,
       activo,
