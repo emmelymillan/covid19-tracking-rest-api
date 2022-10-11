@@ -5,6 +5,7 @@ import authJwt from "../middleware/authJwt.js";
 
 const { hashSync } = pkg;
 const Medico = DB.medico;
+const CentroMedico = DB.centroMedico;
 const Role = DB.role;
 
 // Listar medicos
@@ -147,13 +148,20 @@ export async function create(req, res) {
 }
 
 // Obtener medico
-export function findOne(req, res) {
+export async function findOne(req, res) {
   Medico.findOne({
     where: {
       id: req.params.id,
     },
   })
-    .then((medico) => {
+    .then(async (medico) => {
+      const centroMedico = await CentroMedico.findByPk(medico.fk_centro_medico);
+
+      if (centroMedico) {
+        medico.dataValues.centroMedico = centroMedico.nombre;
+      }
+      delete medico.dataValues.clave;
+
       res.status(200).json(medico);
     })
     .catch((err) => {
