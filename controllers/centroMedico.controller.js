@@ -16,6 +16,10 @@ export async function list(req, res) {
 
   const medico = await Medico.findByPk(medicoId);
 
+  if (medico === null) {
+    return res.status(401).send('Unautorizado!');
+  }
+
   const rol = await medico
     .getRol()
     .then((role) => {
