@@ -30,6 +30,33 @@ export async function list(req, res) {
       return "";
     });
 
+  var fk_cm = null;
+
+  if (rol === "COORDINADOR") {
+    fk_cm = medico.fk_centro_medico;
+  }
+
+  var fk_m = null;
+
+  if (rol === "MEDICO") {
+    fk_m = medicoId;
+  }
+
+  const filtrado = {
+    "$paciente.nombres$": {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    "$paciente.apellidos$": {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    "$paciente.nro_documento$": {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+  };
+
   Caso.findAndCountAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
@@ -37,26 +64,16 @@ export async function list(req, res) {
     include: [Paciente, Medico, CentroMedico],
     where:
       rol === "COORDINADOR"
-        ? { fk_centro_medico: medico.fk_centro_medico }
+        ? {
+            fk_centro_medico: medico.fk_centro_medico,
+            [Op.or]: filtrado,
+          }
         : rol === "MEDICO"
-        ? { fk_medico: medicoId }
-        : null,
-    where: {
-      [Op.or]: {
-        "$paciente.nombres$": {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        "$paciente.apellidos$": {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        "$paciente.nro_documento$": {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-      },
-    },
+        ? {
+            fk_medico: medicoId,
+            [Op.or]: filtrado,
+          }
+        : { [Op.or]: filtrado },
   })
     .then((casos) => {
       res.setHeader("Content-Range", casos.count);

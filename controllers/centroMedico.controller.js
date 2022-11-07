@@ -40,17 +40,29 @@ export async function list(req, res) {
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
     include: TipoCentroMedico,
-    where: rol != "ADMINISTRADOR" && {
-      id: medico.fk_centro_medico,
-    },
-    where: {
-      [Op.or]: {
-        nombre: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-      },
-    },
+    where:
+      rol != "ADMINISTRADOR"
+        ? {
+            id: medico.fk_centro_medico,
+            [Op.or]: {
+              nombre: {
+                [Op.iLike]:
+                  "%" +
+                  (filter.keyword === undefined ? "" : filter.keyword) +
+                  "%",
+              },
+            },
+          }
+        : {
+            [Op.or]: {
+              nombre: {
+                [Op.iLike]:
+                  "%" +
+                  (filter.keyword === undefined ? "" : filter.keyword) +
+                  "%",
+              },
+            },
+          },
   })
     .then((centrosMedicos) => {
       res.setHeader("Content-Range", centrosMedicos.count);

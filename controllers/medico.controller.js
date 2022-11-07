@@ -31,6 +31,33 @@ export async function list(req, res) {
       return "";
     });
 
+  const filtrado = {
+    nombres: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    apellidos: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    nro_documento: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    correo: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    especialidad: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+    codigo_medico: {
+      [Op.iLike]:
+        "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+    },
+  };
+
   Medico.findAndCountAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
@@ -41,41 +68,15 @@ export async function list(req, res) {
         ? {
             fk_centro_medico: medico.fk_centro_medico,
             fk_rol: 3, // medicos
+            [Op.or]: filtrado,
           }
         : rol === "MEDICO"
         ? {
             id: medicoId,
             fk_rol: 3, //medicos
+            [Op.or]: filtrado,
           }
-        : null,
-    where: {
-      [Op.or]: {
-        nombres: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        apellidos: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        nro_documento: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        correo: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        especialidad: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-        codigo_medico: {
-          [Op.iLike]:
-            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
-        },
-      },
-    },
+        : { [Op.or]: filtrado },
   })
     .then((medicos) => {
       res.setHeader("Content-Range", medicos.count);
