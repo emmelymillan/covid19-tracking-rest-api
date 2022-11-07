@@ -1,5 +1,5 @@
 import DB from "../models/index.js";
-import sequelize from "sequelize";
+import sequelize, { Op } from "sequelize";
 import authJwt from "../middleware/authJwt.js";
 
 const Caso = DB.caso;
@@ -18,7 +18,7 @@ export async function list(req, res) {
   const medico = await Medico.findByPk(medicoId);
 
   if (medico === null) {
-    return res.status(401).send('Unautorizado!');
+    return res.status(401).send("Unautorizado!");
   }
 
   const rol = await medico
@@ -30,17 +30,7 @@ export async function list(req, res) {
       return "";
     });
 
-  // if (rol === "ADMINISTRADOR") {
-  const count = await Caso.count({
-    where:
-      rol === "COORDINADOR"
-        ? { fk_centro_medico: medico.fk_centro_medico }
-        : rol === "MEDICO"
-        ? { fk_medico: medicoId }
-        : null,
-  });
-
-  Caso.findAll({
+  Caso.findAndCountAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
@@ -51,10 +41,26 @@ export async function list(req, res) {
         : rol === "MEDICO"
         ? { fk_medico: medicoId }
         : null,
+    where: {
+      [Op.or]: {
+        "$paciente.nombres$": {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        "$paciente.apellidos$": {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        "$paciente.nro_documento$": {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+      },
+    },
   })
     .then((casos) => {
-      res.setHeader("Content-Range", count);
-      res.status(200).send(casos);
+      res.setHeader("Content-Range", casos.count);
+      res.status(200).send(casos.rows);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });

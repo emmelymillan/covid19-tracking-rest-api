@@ -1,5 +1,5 @@
 import DB from "../models/index.js";
-import sequelize from "sequelize";
+import sequelize, { Op } from "sequelize";
 import authJwt from "../middleware/authJwt.js";
 
 const CentroMedico = DB.centroMedico;
@@ -17,7 +17,7 @@ export async function list(req, res) {
   const medico = await Medico.findByPk(medicoId);
 
   if (medico === null) {
-    return res.status(401).send('Unautorizado!');
+    return res.status(401).send("Unautorizado!");
   }
 
   const rol = await medico
@@ -29,13 +29,13 @@ export async function list(req, res) {
       return "";
     });
 
-  const count = await CentroMedico.count({
-    where: rol != "ADMINISTRADOR" && {
-      id: medico.fk_centro_medico,
-    },
-  });
+  // const count = await CentroMedico.count({
+  //   where: rol != "ADMINISTRADOR" && {
+  //     id: medico.fk_centro_medico,
+  //   },
+  // });
 
-  CentroMedico.findAll({
+  CentroMedico.findAndCountAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
@@ -43,10 +43,18 @@ export async function list(req, res) {
     where: rol != "ADMINISTRADOR" && {
       id: medico.fk_centro_medico,
     },
+    where: {
+      [Op.or]: {
+        nombre: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+      },
+    },
   })
     .then((centrosMedicos) => {
-      res.setHeader("Content-Range", count);
-      res.status(200).send(centrosMedicos);
+      res.setHeader("Content-Range", centrosMedicos.count);
+      res.status(200).send(centrosMedicos.rows);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });

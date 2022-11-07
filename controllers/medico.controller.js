@@ -1,5 +1,5 @@
 import DB from "../models/index.js";
-import sequelize from "sequelize";
+import sequelize, { Op } from "sequelize";
 import pkg from "bcryptjs";
 import authJwt from "../middleware/authJwt.js";
 
@@ -31,22 +31,7 @@ export async function list(req, res) {
       return "";
     });
 
-  const count = await Medico.count({
-    where:
-      rol === "COORDINADOR"
-        ? {
-            fk_centro_medico: medico.fk_centro_medico,
-            fk_rol: 3, // medicos
-          }
-        : rol === "MEDICO"
-        ? {
-            id: medicoId,
-            fk_rol: 3, //medicos
-          }
-        : null,
-  });
-
-  Medico.findAll({
+  Medico.findAndCountAll({
     offset: range[0],
     limit: range[1] - range[0] + 1,
     order: [[sequelize.col(sort[0]), sort[1]]],
@@ -63,10 +48,38 @@ export async function list(req, res) {
             fk_rol: 3, //medicos
           }
         : null,
+    where: {
+      [Op.or]: {
+        nombres: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        apellidos: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        nro_documento: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        correo: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        especialidad: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+        codigo_medico: {
+          [Op.iLike]:
+            "%" + (filter.keyword === undefined ? "" : filter.keyword) + "%",
+        },
+      },
+    },
   })
     .then((medicos) => {
-      res.setHeader("Content-Range", count);
-      res.status(200).send(medicos);
+      res.setHeader("Content-Range", medicos.count);
+      res.status(200).send(medicos.rows);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
